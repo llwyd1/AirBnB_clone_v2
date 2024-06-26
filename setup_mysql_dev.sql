@@ -1,6 +1,6 @@
 -- Prepares a MySQL server for the AirBnB clone
 -- Creates a database
-CREATE DATABASE IF NOT EXISTS hbnb_dev;
+CREATE DATABASE IF NOT EXISTS hbnb_dev_db;
 -- creates a user
 CREATE USER IF NOT EXISTS 'hbnb_dev'@'localhost' IDENTIFIED BY 'hbnb_dev_pwd';
 -- grants a user all privileges
