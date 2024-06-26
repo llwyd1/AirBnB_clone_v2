@@ -10,6 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+import re
 
 
 class HBNBCommand(cmd.Cmd):
@@ -115,6 +116,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
+        """
         if not args:
             print("** class name missing **")
             return
@@ -125,6 +127,46 @@ class HBNBCommand(cmd.Cmd):
         storage.save()
         print(new_instance.id)
         storage.save()
+        """
+
+        if args == "" or args is None:
+            print("** class name missing **")
+        else:
+            my_args = args.split(" ")
+            classname = my_args[0]
+
+            if classname not in HBNBCommand.classes:
+                print("** class doesn't exist **")
+                return
+            new_instance = eval("{}()".format(classname))
+            for i in range(1, len(my_args)):
+                pattern = r'^(\S+)\=(\S+)'
+                match = re.search(pattern, my_args[i])
+
+                if not match:
+                    continue
+                key = match.group(1)
+                value = match.group(2)
+                cast = None
+
+                try:
+                    int(value)
+                    cast = int
+                except:
+                    try:
+                        float(value)
+                        cast = float
+                    except:
+                        value = value.replace('"', '')
+                        value = value.replace('_', ' ')
+                if cast:
+                    try:
+                        value = cast(value)
+                    except ValueError:
+                        pass
+                setattr(new_instance, key, value)
+            new_instance.save()
+            print("{}".format(new_instance.id))
 
     def help_create(self):
         """ Help information for the create method """
@@ -319,6 +361,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
