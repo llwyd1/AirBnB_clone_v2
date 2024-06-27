@@ -74,7 +74,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] is '{' and pline[-1] is '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -116,18 +116,6 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        """
-        if not args:
-            print("** class name missing **")
-            return
-        elif args not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
-        print(new_instance.id)
-        storage.save()
-        """
 
         if args == "" or args is None:
             print("** class name missing **")
@@ -148,17 +136,15 @@ class HBNBCommand(cmd.Cmd):
                 key = match.group(1)
                 value = match.group(2)
                 cast = None
-
-                try:
-                    int(value)
-                    cast = int
-                except:
-                    try:
-                        float(value)
+                if not re.search('^".*"$', value):
+                    if '.' in value:
                         cast = float
-                    except:
-                        value = value.replace('"', '')
-                        value = value.replace('_', ' ')
+                    else:
+                        cast = int
+                else:
+                    value = value.replace('"', '')
+                    value = value.replace('_', ' ')
+
                 if cast:
                     try:
                         value = cast(value)
@@ -229,7 +215,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
